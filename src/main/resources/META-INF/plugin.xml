@@ -1,24 +1,16 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.magnetardev.intellijrome</id>
-    <name>intellij-rome Template</name>
+    <name>Rome LSP</name>
     <vendor>magnetardev</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.ultimate</depends>
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.magnetardev.intellijrome.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <platform.lsp.serverSupportProvider implementation="com.github.magnetardev.intellijrome.lsp.RomeLspServerSupportProvider"/>
+        <formattingService implementation="com.github.magnetardev.intellijrome.formatter.RomeFormatterProvider"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.magnetardev.intellijrome.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
-    
-    <actions>
-        <action class="com.github.magnetardev.intellijrome.MyAction" id="MyAction">
-            <add-to-group group-id="StructureViewPopupMenu" />
-        </action>
-    </actions>
 </idea-plugin>
