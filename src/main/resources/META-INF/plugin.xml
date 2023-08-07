@@ -11,6 +11,12 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <platform.lsp.serverSupportProvider implementation="com.github.magnetardev.intellijrome.lsp.RomeLspServerSupportProvider"/>
+        <projectConfigurable id="Settings.Rome"
+                             bundle="messages.RomeBundle"
+                             groupId="language"
+                             nonDefaultProject="false"
+                             key="rome.settings.name"
+                             instance="com.github.magnetardev.intellijrome.settings.RomeSettingsConfigurable"/>
         <formattingService implementation="com.github.magnetardev.intellijrome.formatter.RomeFormatterProvider"/>
     </extensions>
 </idea-plugin>

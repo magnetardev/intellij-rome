@@ -1,8 +1,8 @@
 package com.github.magnetardev.intellijrome.formatter
 
 import com.github.magnetardev.intellijrome.RomeBundle
-import com.github.magnetardev.intellijrome.attachConfigPath
-import com.github.magnetardev.intellijrome.isSupportedFileType
+import com.github.magnetardev.intellijrome.RomeUtils
+import com.github.magnetardev.intellijrome.settings.RomeSettings
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.execution.process.OSProcessHandler
@@ -21,7 +21,7 @@ import java.util.EnumSet
 class RomeFormatterProvider: AsyncDocumentFormattingService() {
     override fun getFeatures(): MutableSet<Feature> = EnumSet.noneOf(Feature::class.java)
 
-    override fun canFormat(file: PsiFile): Boolean = isSupportedFileType(file.fileType)
+    override fun canFormat(file: PsiFile): Boolean = RomeUtils.isSupportedFileType(file.fileType)
 
     override fun getNotificationGroupId(): String = "Rome"
 
@@ -29,16 +29,18 @@ class RomeFormatterProvider: AsyncDocumentFormattingService() {
 
     override fun createFormattingTask(request: AsyncFormattingRequest): FormattingTask? {
         val ioFile = request.ioFile ?: return null
+        val project = request.context.project
         val params = SmartList("format", "--stdin-file-path", ioFile.path)
-        attachConfigPath(params, request.context.project, thisLogger())
-
+        RomeUtils.attachConfigPath(params, project, thisLogger())
 
         try {
             val commandLine: GeneralCommandLine = GeneralCommandLine()
-                .withExePath("rome")
+                .withExePath(RomeSettings.getInstance(project).executablePath)
                 .withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.CONSOLE)
                 .withInput(ioFile)
                 .withParameters(params)
+
+            println(commandLine)
 
             val handler = OSProcessHandler(commandLine.withCharset(StandardCharsets.UTF_8))
             return object : FormattingTask {
@@ -49,7 +51,7 @@ class RomeFormatterProvider: AsyncDocumentFormattingService() {
                             if (exitCode == 0) {
                                 request.onTextReady(output.stdout)
                             } else {
-                                request.onError(RomeBundle.message("formatting.failure"), output.stderr)
+                                request.onError(RomeBundle.message("rome.formatting.failure"), output.stderr)
                             }
                         }
                     })
@@ -67,7 +69,7 @@ class RomeFormatterProvider: AsyncDocumentFormattingService() {
             }
         } catch (error: ExecutionException) {
             val message = error.message ?: ""
-            request.onError(RomeBundle.message("formatting.failure"), message)
+            request.onError(RomeBundle.message("rome.formatting.failure"), message)
             return null
         }
     }
