@@ -1,5 +1,8 @@
 # intellij-rome
 
+> [!IMPORTANT]
+> Rome isn't maintained anymore. [Biome](https://biomejs.dev) is picking up where Rome left off, which has [work being done on its IntelliJ plugin](https://github.com/biomejs/biome/pull/185).
+
 <!-- Plugin description -->
 A very basic – and unofficial – https://rome.tools plugin for JetBrains IDEs.
 <!-- Plugin description end -->
